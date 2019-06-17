@@ -40,7 +40,12 @@ let parseServerState = {};
 
 const dropDB = () => {
   const {mongoConnection} = parseServerState;
-  return mongoConnection.dropDatabaseAsync();
+  return new Promise((resolve, reject) => {
+    mongoConnection.dropDatabase((err) => {
+      if (err) return reject(err);
+      resolve();
+    });
+  });
 };
 
 /**
@@ -79,7 +84,6 @@ function startParseServer(parseServerOptions = {}) {
       const httpServer = http.createServer(app);
 
       Promise.promisifyAll(httpServer);
-      Promise.promisifyAll(mongoConnection);
 
       return httpServer.listenAsync(port)
         .then(() => Object.assign(parseServerState, {
