@@ -40,7 +40,8 @@ async function startParseServer(parseServerOptions = {}) {
         serverURL = `http://localhost:${port}${mountPath}`,
     } = parseServerOptions;
 
-    mongoConnection = await connectDB(databaseURI);
+    let mongoConnection = await connectDB(databaseURI);
+    await mongoConnection.db().dropDatabase(); // Clear the database
 
     parseServerOptions = Object.assign({
         masterKey, javascriptKey, appId,
